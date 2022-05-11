@@ -5,6 +5,7 @@ import coil.compose.AsyncImage
 import com.ohdu.chatapp.R
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.request.ImageRequest
 import com.ohdu.chatapp.StatusBar
 import com.ohdu.chatapp.bean.FavouritesFriendsBean
@@ -156,7 +159,7 @@ fun SearchFriends() {
 
 @Composable
 fun FavouritesFriends() {
-    val data = mutableListOf<FavouritesFriendsBean>(
+    val data = mutableListOf(
         FavouritesFriendsBean("asdfa"),
         FavouritesFriendsBean("asdfa"),
         FavouritesFriendsBean("asdfa"),
@@ -203,16 +206,30 @@ fun FavouritesFriends() {
         items(data) { data ->
             Row {
                 Box(
+                    contentAlignment = Alignment.BottomStart,
                     modifier = Modifier
-                        .background(Color.Red)
-                        .height(110.dp)
-                        .width(80.dp)
+                        .height(140.dp)
+                        .width(95.dp)
+                        .clip(RoundedCornerShape(22.dp))
                 ) {
+
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("https://img0.baidu.com/it/u=530426417,2082848644&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500")
+                            .crossfade(true)
+                            .build(),
+                        contentScale = ContentScale.FillBounds,
+                        placeholder = painterResource(R.mipmap.ic_favourites_default),
+                        error = painterResource(id = R.mipmap.ic_favourites_default),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize()
+                    )
                     Text(
                         text = data.name,
                         color = Color.White,
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.W400
+                        fontWeight = FontWeight.W400,
+                        modifier = Modifier.padding(bottom = 12.dp, start = 8.dp, end = 12.dp)
                     )
                 }
                 Spacer(modifier = Modifier.width(15.dp))
@@ -223,7 +240,7 @@ fun FavouritesFriends() {
 
 
 @Composable
-fun FriendsList() {
+fun FriendsList(navHostController: NavHostController) {
     val data = mutableListOf(
         MessageListBean("Maciej Kowalski", "maciej.kowalski@email.com", "4:23"),
         MessageListBean("Odeusz Piotrowski", "Will do, super, thank you", "4:23"),
@@ -263,7 +280,11 @@ fun FriendsList() {
         }
         item { Spacer(modifier = Modifier.height(26.dp)) }
         itemsIndexed(data) { index, data ->
-            Column(modifier = Modifier.padding(start = 25.dp, end = 28.dp)) {
+            Column(modifier = Modifier
+                .padding(start = 25.dp, end = 28.dp)
+                .clickable {
+                    navHostController.navigate("chatListPage")
+                }) {
                 if (index != 0) {
                     Spacer(modifier = Modifier.height(22.dp))
                 }
@@ -310,5 +331,25 @@ fun FriendsList() {
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun HomeScreen(navHostController: NavHostController) {
+    Surface(
+        color = MaterialTheme.colors.background
+    ) {
+//                        Column(
+//                            modifier = Modifier
+//                                .fillMaxSize()
+//                        ) {
+//                            StatusBar()
+//                            FriendsListTop()
+//                            SearchFriends()
+//                            FavouritesFriends()
+//                            FriendsList()
+//                        }
+        FriendsList(navHostController)
     }
 }
